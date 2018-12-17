@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  namespace: ll2
+  name: worker
+spec:
+  selector:
+    matchLabels:
+      llappName: worker
+  serviceName: worker
+  replicas: 1
+  updateStrategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      namespace: ll2
+      labels:
+        llappName: worker
+    spec:
+      containers:
+      - args:
+        - node
+        - worker/dist/server
+        env:
+        - name: APP_SECRET
+        - name: DOMAIN_NAME
+        - name: SMTP_HOST
+        - name: SMTP_PASS
+        - name: SMTP_PORT
+        - name: SMTP_SECURED
+        - name: SMTP_USER
+        image: podiumnextunstable.azurecr.io/learninglocker2-app:dev
+        name: worker
+        resources: {}
+        volumeMounts:
+        - mountPath: /opt/learninglocker/storage
+          name: worker-claim
+      restartPolicy: Always
+      imagePullSecrets:
+        - name:  acr-auth
+  volumeClaimTemplates:
+  - metadata:
+      name: worker-claim
+    spec:
+      storageClassName: azurefile
+      accessModes: [ "ReadWriteMany" ]
+      resources:
+        requests:
+          storage: 5Gi

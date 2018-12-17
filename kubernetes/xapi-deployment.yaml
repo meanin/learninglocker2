@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: ll2
+  labels:
+    llappName: xapi
+  name: xapi
+spec:
+  selector:
+    matchLabels:
+      llappName: xapi
+  replicas: 1
+  strategy: {}
+  template:
+    metadata:
+      namespace: ll2
+      labels:
+        llappName: xapi
+    spec:
+      containers:
+      - env:
+        - name: MONGO_URL
+          value: mongodb://podium-next-development-lrs:Tbiwor4vb1ulhtQJpkHHnn4iUGQF8matS858U5SWDfgzMwysMDGXtpFknixGLIDVXFwhev295xT7RI9rx1NFgQ==@podium-next-development-lrs.documents.azure.com:10255/?ssl=true&replicaSet=globaldb
+        - name: REDIS_URL
+          value: redis://redis.ll2.svc.cluster.local:6379/0
+        image: learninglocker/xapi-service:v1.1.0
+        name: xapi
+        resources: {}
+      restartPolicy: Always

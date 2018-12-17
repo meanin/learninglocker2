@@ -1,12 +1,6 @@
 version: '2'
 services:
 
-    mongo:
-        image: mongo:3.4
-        restart: unless-stopped
-        volumes:
-            - "${DATA_LOCATION}/mongo:/data/db"
-
     redis:
         image: redis:4-alpine
         restart: unless-stopped
@@ -15,10 +9,9 @@ services:
         image: learninglocker/xapi-service:v1.1.0
         restart: unless-stopped
         environment:
-            - MONGO_URL=mongodb://mongo:27017/learninglocker_v2
+            - MONGO_URL=mongodb://podium-next-development-lrs:Tbiwor4vb1ulhtQJpkHHnn4iUGQF8matS858U5SWDfgzMwysMDGXtpFknixGLIDVXFwhev295xT7RI9rx1NFgQ==@podium-next-development-lrs.documents.azure.com:10255/?ssl=true&replicaSet=globaldb
             - REDIS_URL=redis://redis:6379/0
         depends_on:
-            - mongo
             - redis
 
     api:
@@ -34,7 +27,6 @@ services:
         command: "node api/dist/server"
         restart: unless-stopped
         depends_on:
-            - mongo
             - redis
         volumes:
             - "${DATA_LOCATION}/app-storage:/opt/learninglocker/storage"
@@ -52,7 +44,6 @@ services:
         command: "./entrypoint-ui.sh"
         restart: unless-stopped
         depends_on:
-            - mongo
             - redis
             - api
         volumes:
@@ -71,7 +62,6 @@ services:
         command: "node worker/dist/server"
         restart: unless-stopped
         depends_on:
-            - mongo
             - redis
         volumes:
             - "${DATA_LOCATION}/app-storage:/opt/learninglocker/storage"

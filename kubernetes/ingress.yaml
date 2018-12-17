@@ -1,0 +1,20 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+ name: learninglocker
+spec:
+ tls:
+ - hosts:
+   - 
+ rules:
+ - host: 
+   http:
+     paths:
+     - path: /tea
+       backend:
+         serviceName: tea-svc
+         servicePort: 80
+     - path: /coffee
+       backend:
+         serviceName: coffee-svc
+         servicePort: 80

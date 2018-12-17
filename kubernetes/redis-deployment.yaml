@@ -1,0 +1,40 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis
+  namespace: ll2
+spec:
+  ports:
+  - port: 6379
+    name: client
+  selector:
+    llappName: redis
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert -v
+    kompose.version: 1.16.0 (0c01309)
+  namespace: ll2
+  labels:
+    llappName: redis
+  name: redis
+spec:
+  selector:
+    matchLabels:
+      llappName: redis
+  replicas: 1  
+  strategy: {}
+  template:
+    metadata:
+      namespace: ll2
+      labels:
+        llappName: redis
+    spec:
+      containers:
+      - image: redis:4-alpine
+        name: redis
+        resources: {}
+      restartPolicy: Always
