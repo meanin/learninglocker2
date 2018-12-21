@@ -1,1 +1,0 @@
-kubectl delete namespace learning-locker-2
