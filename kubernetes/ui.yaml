@@ -33,16 +33,48 @@ spec:
       - args:
         - ./entrypoint-ui.sh
         env:
+        - name: NODE_ENV
+          value: production
+        - name: SITE_URL
+          value: USED_FOR_EMAILS.COM
+        - name: UI_PORT
+          value: "3000"
         - name: APP_SECRET
-        - name: DOMAIN_NAME
+          value: T!7L@lk*cs$Z'Z)mn@ey(g`s+x9G-pQ
+        - name: MONGODB_PATH
+          value: $MONGO_DB_CONNECTION_STRING
+        - name: REDIS_HOST
+          value: redis.ll2.svc.cluster.local
+        - name: REDIS_PORT
+          value: "6379"
+        - name: REDIS_DB
+          value: "0"
+        - name: REDIS_PREFIX
+          value: LEARNINGLOCKER
+        - name: COLOR_LOGS
+          value: "true"
         - name: SMTP_HOST
-        - name: SMTP_PASS
+          value: ""
         - name: SMTP_PORT
+          value: ""
         - name: SMTP_SECURED
+          value: ""
         - name: SMTP_USER
-        image: podiumnextunstable.azurecr.io/learninglocker2-app:dev
+          value: ""
+        - name: SMTP_PASS
+          value: ""
+        - name: QUEUE_PROVIDER
+          value: REDIS
+        - name: QUEUE_NAMESPACE
+          value: DEV
+        - name: FS_REPO
+          value: local
+        - name: LOG_MIN_LEVEL
+          value: silly
+        image: $YOUR_CONTAINER_REGISTRY/learninglocker2-app:dev
         name: ui
-        resources: {}
+        ports:
+        - containerPort: 3000
         volumeMounts:
         - mountPath: /opt/learninglocker/storage
           name: ui-claim

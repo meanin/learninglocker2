@@ -1,3 +1,15 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: xapi
+  namespace: ll2
+spec:
+  selector:
+    llappName: xapi
+  ports:
+  - port:  8081
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -10,7 +22,6 @@ spec:
     matchLabels:
       llappName: xapi
   replicas: 1
-  strategy: {}
   template:
     metadata:
       namespace: ll2
@@ -20,10 +31,13 @@ spec:
       containers:
       - env:
         - name: MONGO_URL
-          value: mongodb://podium-next-development-lrs:Tbiwor4vb1ulhtQJpkHHnn4iUGQF8matS858U5SWDfgzMwysMDGXtpFknixGLIDVXFwhev295xT7RI9rx1NFgQ==@podium-next-development-lrs.documents.azure.com:10255/?ssl=true&replicaSet=globaldb
+          value: $MONGO_DB_CONNECTION_STRING
         - name: REDIS_URL
           value: redis://redis.ll2.svc.cluster.local:6379/0
+        - name: LOG_MIN_LEVEL
+          value: silly
         image: learninglocker/xapi-service:v1.1.0
         name: xapi
-        resources: {}
+        ports:
+        - containerPort: 8081
       restartPolicy: Always

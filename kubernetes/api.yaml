@@ -1,0 +1,94 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: api
+  namespace: ll2
+spec:
+  ports:
+  - port: 8080
+    name: client
+  selector:
+    llappName: api
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  namespace: ll2
+  name: api
+spec:
+  selector:
+    matchLabels:
+      llappName: api
+  serviceName: api
+  replicas: 1
+  updateStrategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      namespace: ll2
+      labels:
+        llappName: api
+    spec:
+      containers:
+      - command: [ "/bin/sh", "-c"]
+        args:
+        - node api/dist/server
+        env:
+        - name: NODE_ENV
+          value: production
+        - name: SITE_URL
+          value: ""
+        - name: API_PORT
+          value: "8080"
+        - name: APP_SECRET
+          value: T!7L@lk*cs$Z'Z)mn@ey(g`s+x9G-pQ
+        - name: MONGODB_PATH
+          value: $MONGO_DB_CONNECTION_STRING
+        - name: REDIS_HOST
+          value: redis.ll2.svc.cluster.local
+        - name: REDIS_PORT
+          value: "6379"
+        - name: REDIS_DB
+          value: "0"
+        - name: REDIS_PREFIX
+          value: LEARNINGLOCKER
+        - name: COLOR_LOGS
+          value: "true"
+        - name: SMTP_HOST
+          value: ""
+        - name: SMTP_PORT
+          value: ""
+        - name: SMTP_SECURED
+          value: ""
+        - name: SMTP_USER
+          value: ""
+        - name: SMTP_PASS
+          value: ""
+        - name: QUEUE_PROVIDER
+          value: REDIS
+        - name: QUEUE_NAMESPACE
+          value: DEV
+        - name: FS_REPO
+          value: local
+        - name: LOG_MIN_LEVEL
+          value: silly
+        image: $YOUR_CONTAINER_REGISTRY/learninglocker2-app:dev
+        name: api
+        ports:
+          - containerPort: 8080
+        volumeMounts:
+        - mountPath: /opt/learninglocker/storage
+          name: api-claim
+      restartPolicy: Always
+      imagePullSecrets:
+        - name:  acr-auth
+  volumeClaimTemplates:
+  - metadata:
+      name: api-claim
+    spec:
+      storageClassName: azurefile
+      accessModes: [ "ReadWriteMany" ]
+      resources:
+        requests:
+          storage: 5Gi
